@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+html_content = """<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -144,20 +144,78 @@
     .btn-success {
       background-color: var(--success);
       color: white;
+      width: 100%;
+      padding: 14px;
+      font-size: 1.05rem;
     }
+    .btn-success:hover { background-color: #059669; }
 
     .btn-danger {
       background-color: #fee2e2;
       color: var(--danger);
     }
 
-    /* Contenedor de la cámara */
-    #reader {
+    /* Contenedor de la cámara y Overlay */
+    .scanner-wrapper {
+      position: relative;
       width: 100%;
       border-radius: 10px;
       overflow: hidden;
       border: 2px dashed var(--border);
       background: #000;
+      min-height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #reader {
+      width: 100%;
+    }
+
+    /* Overlay de confirmación "¡Listo!" */
+    .ready-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(16, 185, 129, 0.94);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+      z-index: 10;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .ready-overlay .icon {
+      font-size: 3rem;
+      margin-bottom: 6px;
+    }
+
+    .ready-overlay .title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .ready-overlay .code-display {
+      font-size: 1rem;
+      font-weight: 700;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      word-break: break-all;
     }
 
     /* Banner informativo / temporizador */
@@ -290,7 +348,19 @@
 
   <!-- Escáner de Cámara -->
   <div class="card">
-    <div id="reader"></div>
+    <div class="scanner-wrapper">
+      <div id="reader"></div>
+
+      <!-- Pantalla de confirmación "Listo" -->
+      <div id="readyOverlay" class="ready-overlay" style="display: none;">
+        <div class="icon">✅</div>
+        <div class="title">¡Listo!</div>
+        <div class="code-display" id="overlayCodeText">---</div>
+        <button class="btn-success" onclick="resumeScanning()">
+          ➡️ Siguiente código
+        </button>
+      </div>
+    </div>
     
     <div class="row-btn" style="margin-top: 10px;">
       <button id="btnStartScan" class="btn-primary" onclick="startScanner()">📷 Iniciar Cámara</button>
@@ -330,8 +400,7 @@
 <script>
   let html5QrCode = null;
   let isScanning = false;
-  let lastScannedCode = null;
-  let lastScanTime = 0;
+  let isPausedOnReady = false;
 
   // Estado de la aplicación
   let currentProject = localStorage.getItem("scanner_current_project") || "General";
@@ -442,6 +511,7 @@
       onScanFailure
     ).then(() => {
       isScanning = true;
+      isPausedOnReady = false;
       document.getElementById("btnStartScan").style.display = "none";
       document.getElementById("btnStopScan").style.display = "inline-flex";
     }).catch(err => {
@@ -454,6 +524,8 @@
     if (html5QrCode && isScanning) {
       html5QrCode.stop().then(() => {
         isScanning = false;
+        isPausedOnReady = false;
+        document.getElementById("readyOverlay").style.display = "none";
         document.getElementById("btnStartScan").style.display = "inline-flex";
         document.getElementById("btnStopScan").style.display = "none";
       }).catch(err => console.error("Error al detener cámara:", err));
@@ -461,14 +533,18 @@
   }
 
   function onScanSuccess(decodedText, decodedResult) {
-    const now = Date.now();
-    // Evitar lecturas múltiples repetidas dentro de 2.5 segundos para el mismo código
-    if (decodedText === lastScannedCode && (now - lastScanTime) < 2500) {
-      return;
-    }
+    if (isPausedOnReady) return; // Si ya está esperando "Siguiente", ignorar
 
-    lastScannedCode = decodedText;
-    lastScanTime = now;
+    isPausedOnReady = true;
+
+    // Pausar el flujo de escaneo del video
+    if (html5QrCode) {
+      try {
+        html5QrCode.pause(true);
+      } catch (e) {
+        console.warn("Pause no soportado directamente:", e);
+      }
+    }
 
     // Reproducir sonido beep
     const beep = document.getElementById("beepSound");
@@ -479,10 +555,28 @@
 
     // Vibración háptica en celulares soportados
     if (navigator.vibrate) {
-      navigator.vibrate(100);
+      navigator.vibrate(120);
     }
 
+    // Registrar y enviar datos
     registerItem(decodedText);
+
+    // Mostrar overlay de "¡Listo!"
+    document.getElementById("overlayCodeText").textContent = decodedText;
+    document.getElementById("readyOverlay").style.display = "flex";
+  }
+
+  function resumeScanning() {
+    document.getElementById("readyOverlay").style.display = "none";
+    isPausedOnReady = false;
+
+    if (html5QrCode && isScanning) {
+      try {
+        html5QrCode.resume();
+      } catch (e) {
+        console.warn("Resume fallback:", e);
+      }
+    }
   }
 
   function onScanFailure(error) {
@@ -620,3 +714,9 @@
 
 </body>
 </html>
+"""
+
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+print("Archivo index.html actualizado con pantalla de confirmación y botón 'Siguiente'.")
