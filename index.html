@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Levantamiento Técnico</title>
-  <!-- No bloqueamos la carga con librerías externas en el head -->
   <style>
     :root {
       --primary: #1a73e8;
@@ -411,7 +410,6 @@
 <datalist id="modelosUpsList"></datalist>
 
 <script>
-  // Carga instantánea: El archivo HTML pesa solo ~12 KB.
   let html5QrCode = null;
   let activeScanTarget = null;
   let activeScanType = "";
@@ -422,7 +420,6 @@
 
   const fixedFields = ["tecnicoInput", "unidadInput", "inmuebleInput", "pisoInput", "usuarioInput"];
 
-  // Carga inmediata del DOM (0 demoras)
   window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("projectNameInput").value = currentProject;
     document.getElementById("projectBadge").textContent = currentProject;
@@ -432,12 +429,10 @@
     loadFixedFieldValues();
     loadLocalCatalogCache();
 
-    // Precarga silenciosa en segundo plano de la librería de la cámara
-    // para que la interfaz abra de inmediato sin esperar la descarga
-    setTimeout(lazyLoadScannerLibrary, 1200);
+    // Precarga de la librería tras renderizar
+    setTimeout(lazyLoadScannerLibrary, 1000);
   });
 
-  // Lazy Loading: descarga la librería de escaneo después de que la página ya abrió
   function lazyLoadScannerLibrary(callback) {
     if (isLibraryLoaded || window.Html5Qrcode) {
       isLibraryLoaded = true;
@@ -453,7 +448,6 @@
     document.body.appendChild(script);
   }
 
-  // Audio sintético nativo (0 KB de red)
   function beepSuccess() {
     try {
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -535,33 +529,66 @@
     });
   }
 
-  // Cámara bajo demanda
+  // Apertura robusta de cámara
   function openScannerFor(targetInputId, fieldType) {
     activeScanTarget = targetInputId;
     activeScanType = fieldType;
 
     document.getElementById("scannerModalTitle").textContent = `Escaneando: ${fieldType}`;
-    document.getElementById("scannerModal").style.display = "flex";
-    document.getElementById("scannerLoadingNotice").style.display = "block";
+    const modal = document.getElementById("scannerModal");
+    modal.style.display = "flex";
+
+    const notice = document.getElementById("scannerLoadingNotice");
+    if (notice) notice.style.display = "block";
 
     lazyLoadScannerLibrary(() => {
-      if (!html5QrCode) {
-        html5QrCode = new Html5Qrcode("reader");
-      }
+      setTimeout(() => {
+        if (!html5QrCode) {
+          html5QrCode = new Html5Qrcode("reader");
+        }
 
-      const config = { fps: 8, qrbox: { width: 250, height: 150 }, aspectRatio: 1.777778 };
+        const runStart = () => {
+          const config = {
+            fps: 10,
+            qrbox: { width: 250, height: 150 },
+            aspectRatio: 1.777778
+          };
 
-      html5QrCode.start(
-        { facingMode: "environment" },
-        config,
-        onScanSuccess,
-        () => {}
-      ).then(() => {
-        document.getElementById("scannerLoadingNotice").style.display = "none";
-      }).catch(() => {
-        alert("No se pudo iniciar la cámara.");
-        closeScanner();
-      });
+          // Intento 1: Cámara trasera obligatoria
+          html5QrCode.start(
+            { facingMode: { exact: "environment" } },
+            config,
+            onScanSuccess,
+            () => {}
+          )
+          .then(onStarted)
+          .catch(() => {
+            // Intento 2 (Fallback): Cámara trasera flexible
+            html5QrCode.start(
+              { facingMode: "environment" },
+              config,
+              onScanSuccess,
+              () => {}
+            )
+            .then(onStarted)
+            .catch(err => {
+              console.error("Fallo al iniciar cámara:", err);
+              alert("No se pudo abrir la cámara. Asegúrate de otorgar permisos y que ninguna otra app la esté ocupando.");
+              closeScanner();
+            });
+          });
+        };
+
+        function onStarted() {
+          if (notice) notice.style.display = "none";
+        }
+
+        if (html5QrCode.isScanning) {
+          html5QrCode.stop().then(runStart).catch(runStart);
+        } else {
+          runStart();
+        }
+      }, 150);
     });
   }
 
@@ -588,7 +615,7 @@
     }
   }
 
-  // Envío a Google Sheets (1 sola petición HTTP ligera de ~800 bytes)
+  // Envío a Google Sheets
   function handleFormSubmit(e) {
     e.preventDefault();
     updateDateTime();
