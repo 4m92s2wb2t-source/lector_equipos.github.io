@@ -3,331 +3,116 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Levantamiento Técnico Rápido</title>
+  <title>Levantamiento Técnico</title>
   <style>
     :root {
       --primary: #1a73e8;
-      --primary-dark: #1557b0;
-      --bg: #f1f5f9;
-      --card-bg: #ffffff;
+      --bg: #f8fafc;
+      --card: #ffffff;
       --text: #0f172a;
       --muted: #64748b;
       --border: #cbd5e1;
-      --success: #10b981;
-      --danger: #ef4444;
-      --locked-bg: #f8fafc;
+      --success: #16a34a;
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 540px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding-bottom: 40px;
-    }
-
-    .card {
-      background: var(--card-bg);
-      border-radius: 12px;
-      padding: 14px 16px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-      border: 1px solid var(--border);
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    h1 { font-size: 1.15rem; font-weight: 800; color: #1e293b; }
-    h2 { font-size: 0.92rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 6px; }
-
-    .badge {
-      font-size: 0.72rem;
-      padding: 3px 8px;
-      border-radius: 12px;
-      background: #e0f2fe;
-      color: #0284c7;
-      font-weight: 700;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      margin-bottom: 10px;
-    }
-
-    label {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .req { color: var(--danger); font-weight: 800; }
-
-    .input-row {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 9px 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      font-size: 0.92rem;
-      outline: none;
-      background: #fff;
-    }
-
-    input:focus, select:focus { border-color: var(--primary); }
-
-    input:read-only {
-      background-color: var(--locked-bg);
-      color: #334155;
-      font-weight: 600;
-      border-style: dashed;
-    }
-
-    button {
-      cursor: pointer;
-      font-size: 0.85rem;
-      font-weight: 600;
-      padding: 8px 12px;
-      border-radius: 8px;
-      border: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      white-space: nowrap;
-    }
-
-    button:active { transform: scale(0.97); }
-
-    .btn-primary { background: var(--primary); color: white; }
-    .btn-secondary { background: #e2e8f0; color: #334155; }
-    .btn-unlock { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; font-size: 0.75rem; padding: 4px 8px; }
-    .btn-scan { background: #0284c7; color: white; padding: 9px 12px; }
-    .btn-danger { background: #fee2e2; color: var(--danger); }
-    
-    .btn-submit {
-      background: var(--success);
-      color: white;
-      font-size: 1.05rem;
-      padding: 14px;
-      width: 100%;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
-    }
-
-    .scanner-modal {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.9);
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 12px;
-    }
-
-    .modal-content {
-      background: white;
-      width: 100%;
-      max-width: 440px;
-      border-radius: 16px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    #videoPreview {
-      width: 100%;
-      height: 240px;
-      object-fit: cover;
-      border-radius: 10px;
-      background: #000;
-    }
-
-    .collapsible { display: none; margin-top: 8px; }
-    .collapsible.open { display: block; }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .section-divider {
-      border-top: 1px solid var(--border);
-      margin: 10px 0 12px 0;
-    }
-
-    .scan-guide {
-      border: 2px dashed #38bdf8;
-      border-radius: 8px;
-      position: absolute;
-      width: 220px;
-      height: 120px;
-      pointer-events: none;
-    }
-
-    .loading-spin {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 2px solid #fff;
-      border-top-color: transparent;
-      border-radius: 50%;
-      animation: spin 0.6s linear infinite;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 12px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 12px; }
+    .card { background: var(--card); border-radius: 12px; padding: 14px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    h1 { font-size: 1.15rem; color: #1e293b; display: flex; justify-content: space-between; align-items: center; }
+    h2 { font-size: 0.95rem; color: var(--primary); margin-bottom: 8px; }
+    .badge { font-size: 0.72rem; padding: 3px 8px; border-radius: 12px; background: #e0f2fe; color: #0369a1; font-weight: bold; }
+    .form-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+    label { font-size: 0.75rem; font-weight: bold; color: var(--muted); text-transform: uppercase; }
+    input, select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.95rem; background: #fff; }
+    input:read-only { background: #f1f5f9; color: #475569; border-style: dashed; }
+    .row { display: flex; gap: 6px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    button { cursor: pointer; padding: 10px 14px; border-radius: 8px; border: none; font-weight: 600; font-size: 0.88rem; }
+    .btn-main { background: var(--primary); color: white; }
+    .btn-sec { background: #e2e8f0; color: #334155; }
+    .btn-unlock { background: #fef3c7; color: #92400e; font-size: 0.75rem; padding: 6px 10px; }
+    .btn-scan { background: #0284c7; color: white; white-space: nowrap; }
+    .btn-save { background: var(--success); color: white; width: 100%; padding: 14px; font-size: 1.05rem; }
   </style>
 </head>
 <body>
 
 <div class="container">
 
-  <!-- Configuración -->
+  <!-- Configuración básica -->
   <div class="card">
-    <div class="card-header">
-      <h1>📋 Levantamiento Técnico</h1>
-      <span class="badge" id="projectBadge">General</span>
-    </div>
+    <h1>
+      <span>📋 Levantamiento Técnico</span>
+      <span class="badge" id="lblProject">General</span>
+    </h1>
 
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-      <button class="btn-secondary" style="font-size: 0.72rem; padding: 4px 8px;" onclick="toggleConfig()">
-        ⚙️ Configurar URL
-      </button>
-      <button class="btn-secondary" style="font-size: 0.72rem; padding: 4px 8px;" onclick="fetchCatOptions(true)">
-        🔄 Actualizar Catálogos
-      </button>
-    </div>
-
-    <div id="configSection" class="collapsible">
-      <div class="form-group" style="margin-top: 8px;">
-        <label>URL Web App Google Apps Script</label>
-        <input type="text" id="scriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec">
-        <button class="btn-primary" style="margin-top: 6px;" onclick="saveScriptUrl()">Guardar URL</button>
-      </div>
-    </div>
-
-    <div class="section-divider"></div>
-
-    <div class="form-group">
-      <label>Proyecto / Pestaña Activa</label>
-      <div class="input-row">
-        <input type="text" id="projectNameInput" placeholder="Ej: Piso_4_Oficinas">
-        <button class="btn-primary" onclick="changeProject()">Fijar</button>
-      </div>
+    <div style="display: flex; gap: 8px; margin-top: 8px;">
+      <button class="btn-sec" style="font-size: 0.75rem;" onclick="promptUrl()">⚙️ Configurar Script URL</button>
+      <button class="btn-sec" style="font-size: 0.75rem;" onclick="promptProject()">📁 Cambiar Hoja</button>
     </div>
   </div>
 
   <!-- Formulario -->
-  <form id="inventoryForm" onsubmit="handleFormSubmit(event)">
+  <form id="mainForm" onsubmit="enviarFormulario(event)">
 
-    <!-- Datos Fijos -->
+    <!-- Ubicación y Personal -->
     <div class="card">
-      <div class="card-header">
-        <h2>📍 Ubicación y Personal</h2>
-      </div>
+      <h2>📍 Ubicación y Técnico</h2>
 
       <div class="form-group">
-        <label>Técnico <span class="req">*</span></label>
-        <div class="input-row">
-          <input type="text" id="tecnicoInput" list="tecnicosList" required placeholder="Nombre del Técnico" readonly>
-          <button type="button" class="btn-unlock" id="btnUnlockTecnico" onclick="toggleFieldLock('tecnicoInput', 'btnUnlockTecnico')">✏️ Modificar</button>
+        <label>Técnico</label>
+        <div class="row">
+          <input type="text" id="txtTecnico" required placeholder="Nombre técnico" readonly>
+          <button type="button" class="btn-unlock" onclick="toggleField('txtTecnico', this)">✏️</button>
         </div>
       </div>
 
       <div class="form-group">
-        <label>Unidad Administrativa <span class="req">*</span></label>
-        <div class="input-row">
-          <input type="text" id="unidadInput" list="unidadesList" required placeholder="Área / Dirección" readonly>
-          <button type="button" class="btn-unlock" id="btnUnlockUnidad" onclick="toggleFieldLock('unidadInput', 'btnUnlockUnidad')">✏️ Modificar</button>
+        <label>Unidad Administrativa</label>
+        <div class="row">
+          <input type="text" id="txtUnidad" required placeholder="Área / Dirección" readonly>
+          <button type="button" class="btn-unlock" onclick="toggleField('txtUnidad', this)">✏️</button>
         </div>
       </div>
 
       <div class="grid-2">
         <div class="form-group">
-          <label>Inmueble <span class="req">*</span></label>
-          <div class="input-row">
-            <input type="text" id="inmuebleInput" list="inmueblesList" required placeholder="Edificio / Sede" readonly>
-            <button type="button" class="btn-unlock" id="btnUnlockInmueble" onclick="toggleFieldLock('inmuebleInput', 'btnUnlockInmueble')">✏️</button>
+          <label>Inmueble</label>
+          <div class="row">
+            <input type="text" id="txtInmueble" required placeholder="Sede" readonly>
+            <button type="button" class="btn-unlock" onclick="toggleField('txtInmueble', this)">✏️</button>
           </div>
         </div>
-
         <div class="form-group">
-          <label>Piso <span class="req">*</span></label>
-          <div class="input-row">
-            <input type="text" id="pisoInput" list="pisosList" required placeholder="Ej: Piso 3" readonly>
-            <button type="button" class="btn-unlock" id="btnUnlockPiso" onclick="toggleFieldLock('pisoInput', 'btnUnlockPiso')">✏️</button>
+          <label>Piso</label>
+          <div class="row">
+            <input type="text" id="txtPiso" required placeholder="Piso" readonly>
+            <button type="button" class="btn-unlock" onclick="toggleField('txtPiso', this)">✏️</button>
           </div>
         </div>
       </div>
 
       <div class="form-group">
-        <label>Usuario Asignado <span class="req">*</span></label>
-        <div class="input-row">
-          <input type="text" id="usuarioInput" required placeholder="Nombre completo" readonly>
-          <button type="button" class="btn-unlock" id="btnUnlockUsuario" onclick="toggleFieldLock('usuarioInput', 'btnUnlockUsuario')">✏️ Modificar</button>
+        <label>Usuario Asignado</label>
+        <div class="row">
+          <input type="text" id="txtUsuario" required placeholder="Nombre usuario" readonly>
+          <button type="button" class="btn-unlock" onclick="toggleField('txtUsuario', this)">✏️</button>
         </div>
-      </div>
-
-      <div class="form-group">
-        <label>Fecha del Servicio</label>
-        <input type="text" id="fechaServicioInput" readonly>
       </div>
     </div>
 
     <!-- CPU -->
     <div class="card">
-      <h2>🖥️ CPU / Computadora</h2>
-      <div class="grid-2" style="margin-top: 8px;">
-        <div class="form-group">
-          <label>Marca CPU</label>
-          <input type="text" id="marcaCpuInput" list="marcasCpuList" placeholder="Dell">
-        </div>
-        <div class="form-group">
-          <label>Modelo CPU</label>
-          <input type="text" id="modeloCpuInput" list="modelosCpuList" placeholder="OptiPlex 7080">
-        </div>
+      <h2>🖥️ CPU</h2>
+      <div class="grid-2">
+        <div class="form-group"><label>Marca</label><input type="text" id="txtMarcaCpu" placeholder="Dell"></div>
+        <div class="form-group"><label>Modelo</label><input type="text" id="txtModeloCpu" placeholder="OptiPlex"></div>
       </div>
       <div class="form-group">
-        <label>No. de Serie CPU <span class="req">*</span></label>
-        <div class="input-row">
-          <input type="text" id="serieCpuInput" required placeholder="Serie...">
-          <button type="button" class="btn-scan" onclick="startScannerFor('serieCpuInput', 'CPU')">📷 Escanear</button>
+        <label>No. de Serie CPU *</label>
+        <div class="row">
+          <input type="text" id="txtSerieCpu" required placeholder="Serie...">
+          <button type="button" class="btn-scan" onclick="abrirCamara('txtSerieCpu')">📷 Foto</button>
         </div>
       </div>
     </div>
@@ -335,43 +120,31 @@
     <!-- Monitor -->
     <div class="card">
       <h2>🖥️ Monitor</h2>
-      <div class="grid-2" style="margin-top: 8px;">
-        <div class="form-group">
-          <label>Marca Monitor</label>
-          <input type="text" id="marcaMonitorInput" list="marcasMonList" placeholder="HP">
-        </div>
-        <div class="form-group">
-          <label>Modelo Monitor</label>
-          <input type="text" id="modeloMonitorInput" list="modelosMonList" placeholder="P24v G4">
-        </div>
+      <div class="grid-2">
+        <div class="form-group"><label>Marca</label><input type="text" id="txtMarcaMon" placeholder="HP"></div>
+        <div class="form-group"><label>Modelo</label><input type="text" id="txtModeloMon" placeholder="P24v"></div>
       </div>
       <div class="form-group">
-        <label>No. de Serie Monitor <span class="req">*</span></label>
-        <div class="input-row">
-          <input type="text" id="serieMonitorInput" required placeholder="Serie...">
-          <button type="button" class="btn-scan" onclick="startScannerFor('serieMonitorInput', 'Monitor')">📷 Escanear</button>
+        <label>No. de Serie Monitor *</label>
+        <div class="row">
+          <input type="text" id="txtSerieMon" required placeholder="Serie...">
+          <button type="button" class="btn-scan" onclick="abrirCamara('txtSerieMon')">📷 Foto</button>
         </div>
       </div>
     </div>
 
-    <!-- No Break / UPS -->
+    <!-- No Break -->
     <div class="card">
       <h2>🔋 No Break / UPS</h2>
-      <div class="grid-2" style="margin-top: 8px;">
-        <div class="form-group">
-          <label>Marca No Break</label>
-          <input type="text" id="marcaUpsInput" list="marcasUpsList" placeholder="APC">
-        </div>
-        <div class="form-group">
-          <label>Modelo No Break</label>
-          <input type="text" id="modeloUpsInput" list="modelosUpsList" placeholder="Back-UPS 600">
-        </div>
+      <div class="grid-2">
+        <div class="form-group"><label>Marca</label><input type="text" id="txtMarcaUps" placeholder="APC"></div>
+        <div class="form-group"><label>Modelo</label><input type="text" id="txtModeloUps" placeholder="Back-UPS"></div>
       </div>
       <div class="form-group">
-        <label>No. de Serie No Break <span class="req">*</span></label>
-        <div class="input-row">
-          <input type="text" id="serieUpsInput" required placeholder="Serie...">
-          <button type="button" class="btn-scan" onclick="startScannerFor('serieUpsInput', 'UPS')">📷 Escanear</button>
+        <label>No. de Serie UPS *</label>
+        <div class="row">
+          <input type="text" id="txtSerieUps" required placeholder="Serie...">
+          <button type="button" class="btn-scan" onclick="abrirCamara('txtSerieUps')">📷 Foto</button>
         </div>
       </div>
     </div>
@@ -379,437 +152,158 @@
     <!-- Estatus y Envío -->
     <div class="card">
       <div class="form-group">
-        <label>Estatus del Servicio</label>
-        <select id="estatusInput">
+        <label>Estatus</label>
+        <select id="selEstatus">
           <option value="En Proceso">En Proceso</option>
           <option value="Cerrado">Cerrado</option>
           <option value="Pendiente">Pendiente</option>
         </select>
       </div>
-
-      <button type="submit" id="btnSubmitForm" class="btn-submit">
-        💾 Guardar Levantamiento en Sheets
-      </button>
+      <button type="submit" id="btnEnviar" class="btn-save">💾 Guardar en Google Sheets</button>
     </div>
 
   </form>
 
 </div>
 
-<!-- Input nativo para foto instantánea -->
-<input type="file" id="cameraNativeInput" accept="image/*" capture="environment" style="display:none;" onchange="decodeNativePhoto(event)">
-
-<!-- Modal Escáner Ligero -->
-<div id="scannerModal" class="scanner-modal" style="display: none;">
-  <div class="modal-content">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-      <h3 id="scannerModalTitle" style="font-size: 1rem; color: #1e293b;">Escáner de Códigos</h3>
-      <button type="button" class="btn-danger" style="padding: 4px 8px;" onclick="stopLiveScanner()">✖ Cerrar</button>
-    </div>
-
-    <div style="position: relative; display: flex; align-items: center; justify-content: center;">
-      <video id="videoPreview" playsinline muted autoplay></video>
-      <div class="scan-guide"></div>
-    </div>
-
-    <div id="scannerStatusText" style="font-size: 0.78rem; color: var(--muted); text-align: center;">
-      Apunta la cámara al código de barras
-    </div>
-
-    <div style="border-top: 1px solid var(--border); padding-top: 10px;">
-      <button type="button" class="btn-secondary" style="width: 100%; font-size: 0.82rem;" onclick="openNativeCameraDirect()">
-        📸 Tomar foto del código si no lee en vivo
-      </button>
-    </div>
-  </div>
-</div>
-
-<canvas id="hiddenCanvas" style="display: none;"></canvas>
-
-<!-- Datalists -->
-<datalist id="tecnicosList"></datalist>
-<datalist id="unidadesList"></datalist>
-<datalist id="inmueblesList"></datalist>
-<datalist id="pisosList"></datalist>
-<datalist id="marcasCpuList"></datalist>
-<datalist id="modelosCpuList"></datalist>
-<datalist id="marcasMonList"></datalist>
-<datalist id="modelosMonList"></datalist>
-<datalist id="marcasUpsList"></datalist>
-<datalist id="modelosUpsList"></datalist>
+<!-- Input oculto que dispara la cámara nativa del celular -->
+<input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none;" onchange="procesarFoto(event)">
 
 <script>
-  let activeScanTarget = null;
-  let activeScanType = "";
-  let videoStream = null;
-  let scanAnimationId = null;
-  let barcodeDetector = null;
+  let scriptUrl = localStorage.getItem("app_script_url") || "";
+  let projectName = localStorage.getItem("app_project") || "General";
+  let activeTargetId = null;
 
-  let currentProject = localStorage.getItem("inv_current_project") || "General";
-  let scriptUrl = localStorage.getItem("scanner_script_url") || "";
-
-  const fixedFields = ["tecnicoInput", "unidadInput", "inmuebleInput", "pisoInput", "usuarioInput"];
+  const fixedIds = ["txtTecnico", "txtUnidad", "txtInmueble", "txtPiso", "txtUsuario"];
 
   window.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("projectNameInput").value = currentProject;
-    document.getElementById("projectBadge").textContent = currentProject;
-    document.getElementById("scriptUrlInput").value = scriptUrl;
+    document.getElementById("lblProject").textContent = projectName;
+    fixedIds.forEach(id => {
+      const saved = localStorage.getItem("fix_" + id);
+      const input = document.getElementById(id);
+      if (saved) { input.value = saved; input.readOnly = true; }
+      else { input.readOnly = false; }
+    });
+  });
 
-    updateDateTime();
-    loadFixedFieldValues();
-    loadLocalCatalogCache();
+  function promptUrl() {
+    const val = prompt("Pega la URL de tu Google Apps Script (/exec):", scriptUrl);
+    if (val) {
+      scriptUrl = val.trim();
+      localStorage.setItem("app_script_url", scriptUrl);
+      alert("URL guardada.");
+    }
+  }
+
+  function promptProject() {
+    const val = prompt("Escribe el nombre de la hoja/proyecto:", projectName);
+    if (val) {
+      projectName = val.trim();
+      localStorage.setItem("app_project", projectName);
+      document.getElementById("lblProject").textContent = projectName;
+    }
+  }
+
+  function toggleField(id, btn) {
+    const input = document.getElementById(id);
+    if (input.readOnly) {
+      input.readOnly = false;
+      input.focus();
+      btn.textContent = "🔒";
+    } else {
+      input.readOnly = true;
+      btn.textContent = "✏️";
+      localStorage.setItem("fix_" + id, input.value.trim());
+    }
+  }
+
+  function abrirCamara(targetId) {
+    activeTargetId = targetId;
+    document.getElementById("cameraInput").click();
+  }
+
+  // Decodifica la foto usando BarcodeDetector nativo del móvil o la ingresa manualmente
+  async function procesarFoto(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
 
     if ('BarcodeDetector' in window) {
       try {
-        barcodeDetector = new BarcodeDetector({
-          formats: ['code_128', 'code_39', 'ean_13', 'ean_8', 'qr_code', 'upc_a', 'upc_e']
-        });
-      } catch (e) {
-        barcodeDetector = null;
-      }
+        const detector = new BarcodeDetector({ formats: ['code_128', 'code_39', 'ean_13', 'qr_code'] });
+        const img = new Image();
+        img.src = URL.createObjectURL(file);
+        await img.decode();
+        const results = await detector.detect(img);
+        if (results.length > 0) {
+          document.getElementById(activeTargetId).value = results[0].rawValue;
+          event.target.value = "";
+          return;
+        }
+      } catch (err) {}
     }
-  });
 
-  function updateDateTime() {
-    const pad = n => String(n).padStart(2, '0');
-    const d = new Date();
-    document.getElementById("fechaServicioInput").value = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    // Si el navegador no tiene detector nativo de códigos en fotos, permite confirmación rápida
+    const manual = prompt("Foto tomada. Escribe o confirma el número de serie:");
+    if (manual) document.getElementById(activeTargetId).value = manual.trim();
+    event.target.value = "";
   }
 
-  function toggleConfig() {
-    document.getElementById("configSection").classList.toggle("open");
-  }
-
-  function saveScriptUrl() {
-    scriptUrl = document.getElementById("scriptUrlInput").value.trim();
-    localStorage.setItem("scanner_script_url", scriptUrl);
-    alert("URL guardada.");
-    toggleConfig();
-  }
-
-  function changeProject() {
-    const val = document.getElementById("projectNameInput").value.trim();
-    if (!val) return;
-    currentProject = val;
-    localStorage.setItem("inv_current_project", currentProject);
-    document.getElementById("projectBadge").textContent = currentProject;
-    loadLocalCatalogCache();
-    alert(`Proyecto activo cambiado a: ${currentProject}`);
-  }
-
-  function toggleFieldLock(inputId, btnId) {
-    const input = document.getElementById(inputId);
-    const btn = document.getElementById(btnId);
-
-    if (input.hasAttribute("readonly")) {
-      input.removeAttribute("readonly");
-      input.focus();
-      btn.textContent = "🔒 Fijar";
-      btn.style.background = "#dcfce7";
-      btn.style.color = "#15803d";
-    } else {
-      input.setAttribute("readonly", true);
-      btn.textContent = "✏️ Modificar";
-      btn.style.background = "#fef3c7";
-      btn.style.color = "#92400e";
-      localStorage.setItem(`fixed_${inputId}`, input.value.trim());
-    }
-  }
-
-  function loadFixedFieldValues() {
-    fixedFields.forEach(id => {
-      const saved = localStorage.getItem(`fixed_${id}`);
-      const input = document.getElementById(id);
-      if (saved) {
-        input.value = saved;
-        input.setAttribute("readonly", true);
-      } else {
-        input.removeAttribute("readonly");
-      }
-    });
-  }
-
-  function saveFixedFieldValues() {
-    fixedFields.forEach(id => {
-      localStorage.setItem(`fixed_${id}`, document.getElementById(id).value.trim());
-    });
-  }
-
-  function startScannerFor(targetInputId, fieldType) {
-    activeScanTarget = targetInputId;
-    activeScanType = fieldType;
-
-    document.getElementById("scannerModalTitle").textContent = `Escaneando: ${fieldType}`;
-    document.getElementById("scannerStatusText").textContent = "Iniciando cámara...";
-    document.getElementById("scannerModal").style.display = "flex";
-
-    const video = document.getElementById("videoPreview");
-
-    const constraints = {
-      video: {
-        facingMode: { ideal: "environment" },
-        width: { ideal: 1280 },
-        height: { ideal: 720 }
-      },
-      audio: false
-    };
-
-    navigator.mediaDevices.getUserMedia(constraints)
-      .then(stream => {
-        videoStream = stream;
-        video.srcObject = stream;
-        video.setAttribute("playsinline", true);
-        video.play();
-        document.getElementById("scannerStatusText").textContent = "Apunta al código de barras";
-        startDetectionLoop(video);
-      })
-      .catch(err => {
-        console.warn("Fallo acceso a video directo:", err);
-        stopLiveScanner();
-        openNativeCameraDirect();
-      });
-  }
-
-  function startDetectionLoop(video) {
-    const canvas = document.getElementById("hiddenCanvas");
-    const ctx = canvas.getContext("2d", { willReadFrequently: true });
-
-    const detect = async () => {
-      if (!videoStream || video.readyState !== video.HAVE_ENOUGH_DATA) {
-        scanAnimationId = requestAnimationFrame(detect);
-        return;
-      }
-
-      if (barcodeDetector) {
-        try {
-          const barcodes = await barcodeDetector.detect(video);
-          if (barcodes && barcodes.length > 0) {
-            onCodeDetected(barcodes[0].rawValue);
-            return;
-          }
-        } catch (e) {}
-      } else {
-        ensureFallbackLibrary(() => {
-          if (window.ZXing) {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-          }
-        });
-      }
-
-      scanAnimationId = requestAnimationFrame(detect);
-    };
-
-    scanAnimationId = requestAnimationFrame(detect);
-  }
-
-  function stopLiveScanner() {
-    if (scanAnimationId) {
-      cancelAnimationFrame(scanAnimationId);
-      scanAnimationId = null;
-    }
-    if (videoStream) {
-      videoStream.getTracks().forEach(track => track.stop());
-      videoStream = null;
-    }
-    document.getElementById("scannerModal").style.display = "none";
-  }
-
-  function onCodeDetected(code) {
-    beepSuccess();
-    if (navigator.vibrate) navigator.vibrate(80);
-
-    const input = document.getElementById(activeScanTarget);
-    if (input) {
-      input.value = code;
-    }
-    stopLiveScanner();
-  }
-
-  function openNativeCameraDirect() {
-    document.getElementById("cameraNativeInput").click();
-  }
-
-  function decodeNativePhoto(e) {
-    const file = e.target.files && e.target.files[0];
-    if (!file) return;
-
-    const img = new Image();
-    img.src = URL.createObjectURL(file);
-    img.onload = async () => {
-      if (barcodeDetector) {
-        try {
-          const codes = await barcodeDetector.detect(img);
-          if (codes && codes.length > 0) {
-            onCodeDetected(codes[0].rawValue);
-            e.target.value = "";
-            return;
-          }
-        } catch(err){}
-      }
-
-      ensureFallbackLibrary(() => {
-        loadScript("https://cdn.jsdelivr.net/npm/@zxing/library@0.19.1/umd/index.min.js", () => {
-          const reader = new ZXing.MultiFormatReader();
-          const canvas = document.getElementById("hiddenCanvas");
-          const ctx = canvas.getContext("2d");
-          canvas.width = img.width;
-          canvas.height = img.height;
-          ctx.drawImage(img, 0, 0);
-          const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          try {
-            const luminanceSource = new ZXing.RGBLuminanceSource(imgData.data, canvas.width, canvas.height);
-            const binaryBitmap = new ZXing.BinaryBitmap(new ZXing.HybridBinarizer(luminanceSource));
-            const result = reader.decode(binaryBitmap);
-            onCodeDetected(result.getText());
-          } catch(e) {
-            alert("No se detectó el código de barras en la foto. Intenta más cerca.");
-          }
-          e.target.value = "";
-        });
-      });
-    };
-  }
-
-  function ensureFallbackLibrary(cb) {
-    if (window.ZXing) { cb(); return; }
-    loadScript("https://cdn.jsdelivr.net/npm/@zxing/library@0.19.1/umd/index.min.js", cb);
-  }
-
-  function loadScript(src, cb) {
-    const s = document.createElement("script");
-    s.src = src;
-    s.onload = cb;
-    document.body.appendChild(s);
-  }
-
-  function beepSuccess() {
-    try {
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.value = 880;
-      gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.12);
-    } catch(e){}
-  }
-
-  function handleFormSubmit(e) {
+  function enviarFormulario(e) {
     e.preventDefault();
-    updateDateTime();
-    saveFixedFieldValues();
+    if (!scriptUrl) { alert("Falta configurar la URL del script."); promptUrl(); return; }
 
-    if (!scriptUrl) {
-      alert("Configura la URL de Apps Script.");
-      toggleConfig();
-      return;
-    }
-
-    const btn = document.getElementById("btnSubmitForm");
+    const btn = document.getElementById("btnEnviar");
     btn.disabled = true;
-    btn.innerHTML = '<span class="loading-spin"></span> Guardando...';
+    btn.textContent = "⏳ Guardando...";
+
+    fixedIds.forEach(id => localStorage.setItem("fix_" + id, document.getElementById(id).value.trim()));
+
+    const now = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    const fecha = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
 
     const formData = {
-      fechaServicio: document.getElementById("fechaServicioInput").value,
-      tecnico: document.getElementById("tecnicoInput").value.trim(),
-      unidadAdmin: document.getElementById("unidadInput").value.trim(),
-      piso: document.getElementById("pisoInput").value.trim(),
-      inmueble: document.getElementById("inmuebleInput").value.trim(),
-      usuario: document.getElementById("usuarioInput").value.trim(),
-      marcaCpu: document.getElementById("marcaCpuInput").value.trim(),
-      modeloCpu: document.getElementById("modeloCpuInput").value.trim(),
-      serieCpu: document.getElementById("serieCpuInput").value.trim(),
-      marcaMonitor: document.getElementById("marcaMonitorInput").value.trim(),
-      modeloMonitor: document.getElementById("modeloMonitorInput").value.trim(),
-      serieMonitor: document.getElementById("serieMonitorInput").value.trim(),
-      marcaUps: document.getElementById("marcaUpsInput").value.trim(),
-      modeloUps: document.getElementById("modeloUpsInput").value.trim(),
-      serieUps: document.getElementById("serieUpsInput").value.trim(),
-      estatus: document.getElementById("estatusInput").value
+      fechaServicio: fecha,
+      tecnico: document.getElementById("txtTecnico").value.trim(),
+      unidadAdmin: document.getElementById("txtUnidad").value.trim(),
+      piso: document.getElementById("txtPiso").value.trim(),
+      inmueble: document.getElementById("txtInmueble").value.trim(),
+      usuario: document.getElementById("txtUsuario").value.trim(),
+      marcaCpu: document.getElementById("txtMarcaCpu").value.trim(),
+      modeloCpu: document.getElementById("txtModeloCpu").value.trim(),
+      serieCpu: document.getElementById("txtSerieCpu").value.trim(),
+      marcaMonitor: document.getElementById("txtMarcaMon").value.trim(),
+      modeloMonitor: document.getElementById("txtModeloMon").value.trim(),
+      serieMonitor: document.getElementById("txtSerieMon").value.trim(),
+      marcaUps: document.getElementById("txtMarcaUps").value.trim(),
+      modeloUps: document.getElementById("txtModeloUps").value.trim(),
+      serieUps: document.getElementById("txtSerieUps").value.trim(),
+      estatus: document.getElementById("selEstatus").value
     };
 
     fetch(scriptUrl, {
       method: "POST",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({ action: "save", project: currentProject, formData: formData })
+      body: JSON.stringify({ action: "save", project: projectName, formData: formData })
     })
     .then(r => r.json())
     .then(res => {
       btn.disabled = false;
-      btn.textContent = "💾 Guardar Levantamiento en Sheets";
-
+      btn.textContent = "💾 Guardar en Google Sheets";
       if (res.status === "success") {
-        beepSuccess();
-        alert("✅ Levantamiento registrado");
-
-        ["marcaCpuInput", "modeloCpuInput", "serieCpuInput",
-         "marcaMonitorInput", "modeloMonitorInput", "serieMonitorInput",
-         "marcaUpsInput", "modeloUpsInput", "serieUpsInput"].forEach(id => document.getElementById(id).value = "");
+        alert("✅ Levantamiento registrado correctamente.");
+        ["txtMarcaCpu","txtModeloCpu","txtSerieCpu","txtMarcaMon","txtModeloMon","txtSerieMon","txtMarcaUps","txtModeloUps","txtSerieUps"]
+          .forEach(id => document.getElementById(id).value = "");
       } else {
-        alert("Error al guardar: " + res.message);
+        alert("Error de Google Sheets: " + res.message);
       }
     })
     .catch(() => {
       btn.disabled = false;
-      btn.textContent = "💾 Guardar Levantamiento en Sheets";
-      alert("Error de conexión al enviar.");
+      btn.textContent = "💾 Guardar en Google Sheets";
+      alert("Error de red al enviar. Verifica tu conexión a datos.");
     });
   }
-
-  function fetchCatOptions(manual) {
-    if (!scriptUrl) return;
-
-    fetch(scriptUrl, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({ action: "get_options", project: currentProject })
-    })
-    .then(r => r.json())
-    .then(data => {
-      if (data.status === "success" && data.options) {
-        localStorage.setItem(`cat_${currentProject}`, JSON.stringify(data.options));
-        populateDatalists(data.options);
-        if (manual) alert("Catálogos actualizados.");
-      }
-    })
-    .catch(() => {});
-  }
-
-  function loadLocalCatalogCache() {
-    const raw = localStorage.getItem(`cat_${currentProject}`);
-    if (raw) {
-      try { populateDatalists(JSON.parse(raw)); } catch(e){}
-    }
-  }
-
-  function populateDatalists(opts) {
-    if (!opts) return;
-    const fill = (id, list) => {
-      if (!list) return;
-      document.getElementById(id).innerHTML = list.map(item => `<option value="${escapeHtml(item)}"></option>`).join("");
-    };
-    fill("tecnicosList", opts.tecnicos);
-    fill("unidadesList", opts.unidades);
-    fill("inmueblesList", opts.inmuebles);
-    fill("pisosList", opts.pisos);
-    fill("marcasCpuList", opts.marcasCpu);
-    fill("modelosCpuList", opts.modelosCpu);
-    fill("marcasMonList", opts.marcasMon);
-    fill("modelosMonList", opts.modelosMon);
-    fill("marcasUpsList", opts.marcasUps);
-    fill("modelosUpsList", opts.modelosUps);
-  }
-
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-  }
 </script>
-
 </body>
 </html>
